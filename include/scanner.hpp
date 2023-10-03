@@ -33,5 +33,6 @@ private:
   bool isAlpha(char c);
   bool isAlphaNumeric(char c);
   void identifier();
+  void multilineComment();
 };
 #endif

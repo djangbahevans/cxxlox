@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -17,12 +18,18 @@ void Lox::report(int line, string where, string message) {
 
 void Lox::runFile(string path) {
   ifstream file(path);
-  string line;
-  vector<string> lines;
-  while (getline(file, line)) {
-    lines.push_back(line);
+  string source;
+
+  if (file.is_open()) {
+    stringstream buffer;
+    buffer << file.rdbuf();
+    source = buffer.str();
+  } else {
+    cerr << "Could not open file " << path << "." << endl;
+    exit(74);
   }
-  run(lines);
+
+  run(source);
   if (Lox::hadError)
     exit(65);
 }
@@ -49,6 +56,7 @@ void Lox::run(string source) {
 
 void Lox::run(vector<string> source) {
   for (string line : source) {
+    cout << "I'm here at least" << line << endl;
     run(line);
   }
 }

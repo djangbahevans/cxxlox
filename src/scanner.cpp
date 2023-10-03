@@ -77,6 +77,8 @@ void Scanner::scanToken() {
       // A comment goes until the end of the line
       while (peek() != '\n' && !isAtEnd())
         advance();
+    } else if (match('*')) {
+      multilineComment();
     } else {
       addToken(SLASH);
     }
@@ -110,8 +112,7 @@ char Scanner::advance() { return source[current++]; }
 void Scanner::addToken(TokenType type) { addToken(type, nullptr); }
 
 void Scanner::addToken(TokenType type, any literal) {
-  std::string text =
-      source.substr(start, current); // TODO: Check the substr call
+  std::string text = source.substr(start, current - start);
   tokens.push_back(Token(type, text, literal, line));
 }
 
@@ -147,8 +148,7 @@ void Scanner::string() {
   advance();
 
   // Trim the surrounding quotes.
-  std::string value =
-      source.substr(start + 1, current - 1); // TODO: Check the substr call
+  std::string value = source.substr(start + 1, current - start - 2);
   addToken(STRING, value);
 }
 
@@ -168,7 +168,7 @@ void Scanner::number() {
   }
 
   addToken(NUMBER,
-           stod(source.substr(start, current))); // TODO: Check the substr call
+           stod(source.substr(start, current-start)));
 }
 
 char Scanner::peekNext() {
@@ -182,7 +182,7 @@ void Scanner::identifier() {
     advance();
 
   std::string text =
-      source.substr(start, current); // TODO: Check the substr call
+      source.substr(start, current-start);
   if (const auto it = keywords.find(text); it != keywords.end()) {
     addToken(it->second);
   } else {
@@ -195,3 +195,20 @@ bool Scanner::isAlpha(char c) {
 }
 
 bool Scanner::isAlphaNumeric(char c) { return isAlpha(c) || isDigit(c); }
+
+void Scanner::multilineComment() {
+  while (peek() != '*' && peekNext() != '/') {
+    if (peek() == '\n')
+      line++;
+    advance();
+  }
+
+  if (isAtEnd()) {
+    Lox::error(line, "Unterminated multiline comment");
+    return;
+  }
+
+  // The closing "*/".
+  advance();
+  advance();
+}
