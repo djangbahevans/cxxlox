@@ -90,7 +90,7 @@ void Scanner::scanToken() {
   case '\n':
     line++;
     break;
-  case ':':
+  case '"':
     string();
     break;
   default:
@@ -133,7 +133,7 @@ char Scanner::peek() {
 }
 
 void Scanner::string() {
-  while (peek() != '"') {
+  while (peek() != '"' && !isAtEnd()) {
     if (peek() == '\n')
       line++;
     advance();
@@ -172,7 +172,7 @@ void Scanner::number() {
 }
 
 char Scanner::peekNext() {
-  if (current + 1 > source.length())
+  if (current + 1 >= source.length())
     return '\0';
   return source.at(current + 1);
 }
@@ -197,7 +197,7 @@ bool Scanner::isAlpha(char c) {
 bool Scanner::isAlphaNumeric(char c) { return isAlpha(c) || isDigit(c); }
 
 void Scanner::multilineComment() {
-  while (peek() != '*' && peekNext() != '/') {
+  while (peek() != '*' && peekNext() != '/' && !isAtEnd()) {
     if (peek() == '\n')
       line++;
     advance();
