@@ -4,6 +4,10 @@
 #include <any>
 #include <string>
 
+/**
+ * @brief The type of the token
+ *
+ */
 enum TokenType {
   // Single character tokens
   LEFT_PAREN,
@@ -54,8 +58,18 @@ enum TokenType {
   EOF_
 };
 
+/**
+ * @brief Converts a TokenType to a string
+ *
+ * @param type The TokenType to be converted
+ * @return std::string The string representation of the TokenType
+ */
 std::string TokenTypeToString(TokenType type);
 
+/**
+ * @brief The token class
+ *
+ */
 class Token {
   TokenType type;
   std::string lexeme;
@@ -63,6 +77,14 @@ class Token {
   int line;
 
 public:
+  /**
+   * @brief Construct a new Token object
+   *
+   * @param type The type of the token
+   * @param lexeme The lexeme of the token
+   * @param literal The literal value of the token
+   * @param line The line number of the token
+   */
   Token(TokenType type, std::string lexeme, std::any literal, int line);
 
   std::string toString() const;

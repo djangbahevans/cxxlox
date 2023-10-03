@@ -53,10 +53,3 @@ void Lox::run(string source) {
     cout << token.toString() << endl;
   }
 }
-
-void Lox::run(vector<string> source) {
-  for (string line : source) {
-    cout << "I'm here at least" << line << endl;
-    run(line);
-  }
-}
